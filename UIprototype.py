@@ -5,12 +5,13 @@ import whisper
 import openai 
 from gpt4all import GPT4All
 import os
+import re
 
 # Initialize OpenAI client use with server
 #client = openai.OpenAI(api_key='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')
 #openai.api_key = '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'
 #model = GPT4All("gpt4all-lora-quantized")  # local LLM for polishing
-model_path = r"C:\Users\Toiek\gpt4all\Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf"
+model_path = r"C:\Users\Toiek\gpt4all\Meta-Llama-3-8B-Instruct-Q6_K.gguf"
 model = GPT4All(model_path)
 
 st.set_page_config(page_title="Video to Notes", layout="wide")
@@ -20,8 +21,8 @@ st.title("📹 Teaching Video → Structured Notes")
 @st.cache_resource
 def load_models():
     try:
-        whisper_model = whisper.load_model("base")  # Whisper for transcription
-        model_path = r"C:\Users\Toiek\gpt4all\q4_0-orca-mini-3b.gguf"  # update path if needed
+        whisper_model = whisper.load_model("medium")  # Whisper for transcription
+        model_path = r"C:\Users\Toiek\gpt4all\Meta-Llama-3-8B-Instruct-Q6_K.gguf"  # update path if needed
         gpt_model = GPT4All(model_path)  # GPT4All for polishing notes
         st.success("✅ Successfully loaded model!")
         return whisper_model, gpt_model
@@ -52,8 +53,14 @@ def split_video(video_path: str, segment_length_sec: int = 300):
 def run_local_whisper(video_file: str):
     """Transcribe video locally using Whisper."""
     result = whisper_model.transcribe(video_file)
-    text = result["text"]
-    segments = [{"text": seg.strip()} for seg in text.split(".") if seg.strip()]
+    segments = []
+    for seg in result["segments"]:
+        segments.append({
+            "id": seg["id"],
+            "start": seg["start"],
+            "end": seg["end"],
+            "text": seg["text"].strip()
+        })
     return segments
 
 def chunk_segments(segments, max_words=500):
@@ -88,14 +95,23 @@ def polish_with_gpt4all(model, text_chunk: str):
     - summarize it don't just rewrite the text
     - get rid of unnecessary details like all of the text that does not add to the teaching value
     - don't write every word that was said, summarize and condense the information
+    - Do not include explanations, greetings, or meta comments.
 
 
     Transcript:
     {text_chunk}
     """
     with model.chat_session() as session:
-        response = session.generate(prompt, max_tokens=600)
-    return response.strip()
+        response = session.generate(prompt, max_tokens=600, temp=0.7)
+    # ---- CLEANUP STEP ----
+    clean_text = str(response)
+
+    # Remove chat artifacts or unwanted tags
+    clean_text = re.sub(r"<\|.*?\|>", "", clean_text)       # remove tokens like <|eot_id|>
+    clean_text = re.sub(r"(?i)^(?:assistant:|system:|user:)\s*", "", clean_text)
+    clean_text = re.sub(r"(Please let me know.*|I'm glad.*|Would you like.*)$", "", clean_text, flags=re.I)
+    clean_text = clean_text.strip()
+    return clean_text
 
 # -------- Streamlit UI --------
 uploaded_file = st.file_uploader("Upload your video", type=["mp4", "mov", "mkv"])
@@ -126,7 +142,12 @@ if uploaded_file:
 
         # Show transcript
         st.subheader("🗒️ Transcript")
-        st.text_area("Transcript text:", transcript_text, height=250)
+        formatted_segments = [
+            f"[{math.floor(seg['start']//60):02d}:{math.floor(seg['start']%60):02d} - "
+            f"{math.floor(seg['end']//60):02d}:{math.floor(seg['end']%60):02d}] {seg['text']}"
+            for seg in all_segments
+        ]
+        st.text_area("Transcript text:", formatted_segments, height=400)
 
         with st.spinner("Polishing transcript with GPT4All..."):
             chunks = chunk_segments(all_segments, max_words=500)
