@@ -21,6 +21,7 @@ streamlit run UIprototype.py # Run the application
 <img width="933" height="838" alt="image" src="https://github.com/user-attachments/assets/b8db6344-1de3-44ea-8957-12a5243e80f2" />
 
 ### After Transcription, the program will polished the transcribed text and print out the polished note
+<img width="1706" height="705" alt="image" src="https://github.com/user-attachments/assets/6c760be4-137d-44d5-8d0c-29552e910dd6" />
 
 # Limitations
 - Whisper transcription can be slow on CPU
