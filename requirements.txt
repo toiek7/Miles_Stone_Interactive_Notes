@@ -1,0 +1,4 @@
+streamlit
+openai
+openai-whisper
+gpt4all
