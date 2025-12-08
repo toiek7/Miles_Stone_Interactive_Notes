@@ -4,11 +4,12 @@
 This repository contains the program that convert the video file into an interactive note in just a few clicks. It also contains the bi-weekly progress for this project and the video tutorials for tasting the program. The program is a simple UI using Streamlit dashboard in python as a prototype to shows the interactive notes.
 
 # Installation
-python -m venv venv # Create virtual environment
+```python -m venv venv # Create virtual environment
 source venv/bin/activate   # macOS/Linux
 venv\Scripts\activate      # Windows
 pip install -r requirements.txt # Install dependencies
 streamlit run UIprototype.py # Run the application
+```
 
 # Features
 ### Insert the video that want the program to process
