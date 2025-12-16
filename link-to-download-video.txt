@@ -1,0 +1,4 @@
+CMKL - Glider Tutorial Video:
+https://drive.google.com/drive/folders/1E_YDxDhusO9a2FB1-krS4J-zG1ttSzOg?usp=sharing
+
+Example description: This video is designed to help users—especially students in the AiCE program at CMKL University—understand how to use a tool called Glider. Glider provides an alternative way to work on projects with APEX, the CMKL high-performance computing system, through a convenient web portal.
