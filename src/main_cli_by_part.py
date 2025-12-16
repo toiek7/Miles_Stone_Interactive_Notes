@@ -47,12 +47,12 @@ logger.info("=" * 70)
 # Run pipeline part 1
 logger.info("\n" + "=" * 70 + "\n")
 logger.info("Running Pipeline Part 1")
-video_path, video_objective, output_dir = pipeline_part1(work_id, video_path, video_objective, output_dir, logger)
+video_objective, output_dir, clips_dir = pipeline_part1(work_id, video_path, video_objective, output_dir, logger)
 
 # Run pipeline part 2
 logger.info("\n" + "=" * 70 + "\n")
 logger.info("Running Pipeline Part 2")
-pipeline_part2(output_dir, video_path, video_objective, logger)
+pipeline_part2(video_objective, output_dir, clips_dir, logger)
 
 logger.info("=" * 70)
 logger.info(f"Pipeline completed for work_id: {work_id}")

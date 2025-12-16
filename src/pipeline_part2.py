@@ -1,6 +1,5 @@
 from pathlib import Path
 from utils.json_io import load_json
-from video_processing.cut_video import cut_video_clips
 from video_processing.create_gif import convert_clips_to_gifs
 from cv_filter.filter_gif import filter_gifs_by_relevance
 from document_generator.create_final_draft import create_final_draft_json
@@ -8,14 +7,9 @@ from document_generator.generate_document import generate_with_ollama_cloud
 from document_generator.build_html import build_final_html
 
 
-def pipeline_part2(output_dir, video_path, video_objective, logger=None):
+def pipeline_part2(output_dir, video_objective, clips_dir, logger=None):
     output_dir = Path(output_dir)  # ensure it's a Path
     grouped_data = load_json(output_dir / "grouped.json")
-
-    # Step 5: Cut video clips
-    print("\n[5/10] Cutting video clips...")
-    clips_dir = cut_video_clips(str(video_path), grouped_data, output_dir, logger)
-    print(f"Clips saved to: {clips_dir}")
 
     # Step 6: Convert to GIFs <<< Start here [Done]
     print("\n[6/10] Converting clips to GIFs...")

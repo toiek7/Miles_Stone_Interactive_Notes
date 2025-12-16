@@ -7,20 +7,13 @@ from document_generator.generate_document import generate_with_ollama_cloud
 from document_generator.build_html import build_final_html
 
 # Change these paths as needed for testing
-output_dir = "output/work_20251209_064431"
-video_path = "data/100s_ml_explain.mp4"
-video_objective = """
-Machine Learning is the process of teaching a computer how perform a task with out explicitly programming it. The process feeds algorithms with large amounts of data to gradually improve predictive performance.
-"""
-
+output_dir = "output/work_20251209_084147"
+video_path = "data/glider-tutorial.mp4"
+video_objective = "This video is designed to help users—especially students in the AiCE program at CMKL University—understand how to use a tool called Glider. Glider provides an alternative way to work on projects with APEX, the CMKL high-performance computing system, through a convenient web portal."
 
 grouped_data = load_json(output_dir + "/grouped.json")
 
-
-# Step 5: Cut video clips
-print("\n[5/10] Cutting video clips...")
-clips_dir = cut_video_clips(str(video_path), grouped_data, output_dir, logger=None)
-print(f"Clips saved to: {clips_dir}")
+clips_dir = "output/work_20251209_084147/clips"
 
 # Step 6: Convert to GIFs <<< Start here [Done]
 print("\n[6/10] Converting clips to GIFs...")

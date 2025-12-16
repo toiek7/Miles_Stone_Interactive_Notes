@@ -11,6 +11,7 @@ from transcription.transcribe import transcribe_video
 from classification.segment_classifier import classify_segments
 from filtering.filter_segments import filter_segments
 from grouping.group_segments import group_and_summarize
+from video_processing.cut_video import cut_video_clips
 
 def pipeline_part1(work_id, video_path, video_objective, output_dir, logger=None):
     """
@@ -53,10 +54,15 @@ def pipeline_part1(work_id, video_path, video_objective, output_dir, logger=None
         logger.info("Step 4: Starting grouping and summarization")
         grouped_data = group_and_summarize(filtered_segments, video_objective, output_dir, logger)
         logger.info(f"Grouping complete. {len(grouped_data)} groups created.")
+
+        # Step 5: Cut video clips
+        print("\n[5/10] Cutting video clips...")
+        clips_dir = cut_video_clips(str(video_path), grouped_data, output_dir, logger)
+        print(f"Clips saved to: {clips_dir}")
         
     except Exception as e:
         logger.error(f"Pipeline failed: {str(e)}", exc_info=True)
         print(f"\nERROR: Pipeline failed: {str(e)}")
         sys.exit(1)
 
-    return video_path, video_objective, output_dir
+    return video_objective, output_dir, clips_dir
